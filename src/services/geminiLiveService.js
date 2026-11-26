@@ -34,17 +34,14 @@ export class GeminiLiveSession {
   },
 
   onmessage: (message) => {
-    console.log('[Gemini] Incoming message:', JSON.stringify(message));
     this.handleMessage(message);
   },
 
   onerror: (err) => {
-    console.error('[Gemini] Error:', err);
     this.onError?.(err);
   },
 
   onclose: (event) => {
-    console.error('[Gemini] Connection closed:', event);
     this.ready = false;
   },
 },
@@ -57,7 +54,6 @@ export class GeminiLiveSession {
   const content = message?.serverContent;
 
   if (!content) {
-    console.log('[Gemini] No serverContent');
     return;
   }
 
@@ -65,7 +61,6 @@ export class GeminiLiveSession {
   const interim = content.interimInputTranscription?.text;
 
   if (interim) {
-    console.log('[Gemini] Interim transcript:', interim);
     this.onPartial?.(interim);
   }
 
@@ -73,12 +68,10 @@ export class GeminiLiveSession {
   const finalText = content.inputTranscription?.text;
 
   if (finalText) {
-    console.log('[Gemini] Final transcript:', finalText);
     this.onFinal?.(finalText);
   }
 
   if (content.turnComplete) {
-    console.log('[Gemini] Turn completed');
   }
 }
 
@@ -88,7 +81,6 @@ export class GeminiLiveSession {
 
 async sendAudioChunk(pcmChunk) {
   if (!this.ready || !this.session) {
-    console.log('[Gemini] Session not ready');
     return;
   }
 
@@ -103,10 +95,8 @@ async sendAudioChunk(pcmChunk) {
     this.audioChunkCount = (this.audioChunkCount || 0) + 1;
 
     if (this.audioChunkCount % 20 === 0) {
-      console.log('[Gemini] Audio chunks sent:', this.audioChunkCount);
     }
   } catch (err) {
-    console.error('[Gemini] Audio send failed:', err);
     this.onError?.(err);
   }
 }
@@ -117,7 +107,6 @@ async sendAudioChunk(pcmChunk) {
       this.session?.close();
     } catch {
       // ignore close errors
-      console.warn('[Gemini] Session close failed, ignoring.');
     }
   }
 }
