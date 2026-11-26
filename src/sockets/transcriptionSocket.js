@@ -4,7 +4,6 @@ import { createTranscription } from '../db/transcriptionRepo.js';
 
 export function registerTranscriptionSocket(io) {
   io.on('connection', (socket) => {
-    console.log('[Socket] Client connected:', socket.id);
 
     let sttSession = null;
     let sessionId = null;
@@ -14,7 +13,6 @@ export function registerTranscriptionSocket(io) {
 
     socket.on('session:start', async () => {
       try {
-        console.log('[Socket] Session start requested');
 
         // Prevent duplicate sessions
         if (sttSession) {
@@ -29,12 +27,10 @@ export function registerTranscriptionSocket(io) {
 
         const newSession = createSttSession({
           onPartial: (text) => {
-            console.log('[Socket] Partial transcript:', text);
             socket.emit('transcript:partial', { text });
           },
 
           onFinal: (text) => {
-            console.log('[Socket] Final transcript:', text);
             fullText = fullText
               ? `${fullText} ${text}`
               : text;
@@ -42,7 +38,6 @@ export function registerTranscriptionSocket(io) {
           },
 
           onError: (err) => {
-            console.error('[Socket] STT error:', err);
             socket.emit('session:error', {
               message: err.message || String(err),
             });
@@ -52,11 +47,9 @@ export function registerTranscriptionSocket(io) {
         await newSession.connect();
         sttSession = newSession;
 
-        console.log('[Socket] STT session ready');
         socket.emit('session:started', { sessionId });
 
       } catch (err) {
-        console.error('[Socket] Session start failed:', err);
         socket.emit('session:error', {
           message: err.message || String(err),
         });
@@ -65,7 +58,6 @@ export function registerTranscriptionSocket(io) {
 
     socket.on('audio:chunk', async (chunk) => {
       if (!sttSession) {
-        console.log('[Socket] STT session not ready');
         return;
       }
 
@@ -76,12 +68,10 @@ export function registerTranscriptionSocket(io) {
       try {
         await sttSession.sendAudioChunk(buffer);
       } catch (err) {
-        console.error('[Socket] Audio forwarding failed:', err);
       }
     });
 
     socket.on('session:stop', async () => {
-      console.log('[Socket] Session stop requested');
 
       sttSession?.close();
       sttSession = null;
@@ -104,7 +94,6 @@ export function registerTranscriptionSocket(io) {
 
         socket.emit('session:saved', record);
       } catch (err) {
-        console.error('[Socket] Save failed:', err);
         socket.emit('session:error', {
           message: err.message || String(err),
         });
@@ -112,7 +101,6 @@ export function registerTranscriptionSocket(io) {
     });
 
     socket.on('disconnect', () => {
-      console.log('[Socket] Client disconnected:', socket.id);
       sttSession?.close();
       sttSession = null;
     });

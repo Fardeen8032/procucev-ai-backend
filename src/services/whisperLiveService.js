@@ -1,13 +1,6 @@
 import WebSocket from 'ws';
 import { env } from '../config/env.js';
 
-/**
- * Adapter for a self-deployed open-source streaming STT service exposing a
- * websocket endpoint that accepts raw PCM16 audio chunks and emits JSON
- * messages like { type: 'partial'|'final', text }. Compatible with
- * self-hosted servers such as whisper_streaming / faster-whisper-server.
- * Same interface as GeminiLiveSession so it is a drop-in replacement.
- */
 export class WhisperLiveSession {
   constructor({ onPartial, onFinal, onError }) {
     this.onPartial = onPartial;
