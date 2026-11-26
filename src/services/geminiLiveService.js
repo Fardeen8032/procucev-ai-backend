@@ -1,11 +1,5 @@
 import { GoogleGenAI, Modality } from '@google/genai';
 import { env } from '../config/env.js';
-
-/**
- * Wraps a single Gemini Live API session for real-time, multilingual
- * speech-to-text. Audio is streamed in as 16kHz mono PCM16 chunks;
- * partial and final transcripts are surfaced via callbacks.
- */
 export class GeminiLiveSession {
   constructor({ onPartial, onFinal, onError }) {
     this.onPartial = onPartial;
@@ -33,16 +27,6 @@ export class GeminiLiveSession {
           'no translation, preserve the original language(s) as spoken.',
         inputAudioTranscription: {},
       },
-      // callbacks: {
-      //   onopen: () => {
-      //     this.ready = true;
-      //   },
-      //   onmessage: (message) => this.handleMessage(message),
-      //   onerror: (err) => this.onError?.(err),
-      //   onclose: () => {
-      //     this.ready = false;
-      //   },
-      // },
       callbacks: {
   onopen: () => {
     console.log('[Gemini] Connection opened');
@@ -68,22 +52,6 @@ export class GeminiLiveSession {
 
     return this;
   }
-
-  // handleMessage(message) {
-  //   // Native input audio transcription events carry the recognized text.
-  //   const inputTranscription = message?.serverContent?.inputTranscription;
-  //   if (inputTranscription?.text) {
-  //     this.pendingText += inputTranscription.text;
-  //     this.onPartial?.(this.pendingText);
-  //   }
-
-  //   if (message?.serverContent?.turnComplete) {
-  //     if (this.pendingText.trim()) {
-  //       this.onFinal?.(this.pendingText.trim());
-  //     }
-  //     this.pendingText = '';
-  //   }
-  // }
 
   handleMessage(message) {
   const content = message?.serverContent;
@@ -117,15 +85,6 @@ export class GeminiLiveSession {
   /**
    * @param {Buffer} pcmChunk raw 16-bit PCM, 16kHz mono
    */
-  // sendAudioChunk(pcmChunk) {
-  //   if (!this.ready || !this.session) return;
-  //   this.session.sendRealtimeInput({
-  //     audio: {
-  //       data: pcmChunk.toString('base64'),
-  //       mimeType: 'audio/pcm;rate=16000',
-  //     },
-  //   });
-  // }
 
 async sendAudioChunk(pcmChunk) {
   if (!this.ready || !this.session) {

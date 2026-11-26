@@ -9,7 +9,7 @@ export const env = {
   },
   gemini: {
     apiKey: process.env.GEMINI_API_KEY || '',
-    model: process.env.GEMINI_LIVE_MODEL || 'gemini-2.0-flash-live-001',
+    model: process.env.GEMINI_LIVE_MODEL || 'gemini-3.5-transcribe-live',
   },
   sttProvider: process.env.STT_PROVIDER || 'gemini',
   whisperWsUrl: process.env.WHISPER_WS_URL || 'ws://localhost:9000/ws',

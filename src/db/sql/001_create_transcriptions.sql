@@ -1,6 +1,3 @@
--- Run this in the Supabase SQL editor (or via `supabase db push`) to create
--- the transcription history table.
-
 create extension if not exists "pgcrypto";
 
 create table if not exists transcriptions (
@@ -31,6 +28,5 @@ create trigger transcriptions_set_updated_at
   for each row
   execute function set_updated_at();
 
--- RLS: server uses the service role key (bypasses RLS), so this just keeps
--- the table locked down from anon/public access by default.
+
 alter table transcriptions enable row level security;
